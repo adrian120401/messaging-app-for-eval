@@ -2,11 +2,23 @@ import React from "react";
 
 import { StyleSheet, View } from "react-native";
 import * as MessageView from "../../../../components/MessageView/MessageView";
-import { getChatEventPropertyById } from "../../../../redux/chat/chat.selector";
+import { getChatEventById, getChatEventPropertyById } from "../../../../redux/chat/chat.selector";
 import { useAppSelector } from "../../../../redux/hooks";
 import Regular from "./Layout/Regular";
-import { MessageProvider } from "./Provider";
+import ImageLayout from "./Layout/Image";
+import { MessageProvider, useMessageContext } from "./Provider";
 import { MessageProps } from "./types";
+
+function MessageContent() {
+  const { id } = useMessageContext();
+  const message = useAppSelector(getChatEventById(id));
+
+  if (message?.type === 'image') {
+    return <ImageLayout message={message} />;
+  }
+
+  return <Regular />;
+}
 
 function Message(props: MessageProps) {
   const { id } = props;
@@ -23,7 +35,7 @@ function Message(props: MessageProps) {
     <MessageProvider id={id}>
       <MessageView.Root isReceived={isReceived}>
         <View style={styles.messageContent}>
-          <Regular />
+          <MessageContent />
         </View>
 
         <MessageView.BottomComposer

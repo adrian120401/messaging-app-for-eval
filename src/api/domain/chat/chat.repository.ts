@@ -1,6 +1,6 @@
 import { HttpService } from "../../baseRepositories/api/http/axios/axios-http-service";
 import ApiRepository from "../../baseRepositories/api/respository";
-import { RequestData } from "../../http/Http";
+import { ContentType, RequestData } from "../../http/Http";
 import Paginated from "../../types/paginated";
 
 export default class ChatRepository extends ApiRepository {
@@ -29,11 +29,15 @@ export default class ChatRepository extends ApiRepository {
     return HttpService.postAsync(data);
   }
 
-  public async sendImageMessage<T>(): Promise<T> {
-    const data: RequestData = {
-      endpoint: `${this.endpoint}/send-text`,
+  public async sendImageMessage<T>(data: FormData): Promise<T> {
+    const requestData: RequestData = {
+      endpoint: `${this.endpoint}/send-image`,
+      body: data,
+      headers: {
+        "Content-Type": ContentType.FORMDATA,
+      },
     };
 
-    return HttpService.postAsync(data);
+    return HttpService.postAsync(requestData);
   }
 }
