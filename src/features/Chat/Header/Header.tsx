@@ -6,6 +6,7 @@ import { ThemedView } from "../../../components/ThemedView/ThemedView";
 import { Color } from "../../../constants/colors";
 import Avatar from "./Avatar";
 import Data from "./Data";
+import Logout from "./Logout";
 
 function Header() {
   const insets = useSafeAreaInsets();
@@ -20,6 +21,8 @@ function Header() {
       <Avatar />
 
       <Data />
+
+      <Logout />
     </ThemedView>
   );
 }
