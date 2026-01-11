@@ -1,6 +1,6 @@
 import axios from "axios";
 import { config } from "../../../../config";
-import { authInterceptor } from "./interceptor";
+import { authInterceptor, unauthorizedInterceptor } from "./interceptor";
 
 const apiClient = axios.create({
   baseURL: config.apiUrl,
@@ -8,5 +8,9 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use(authInterceptor);
+apiClient.interceptors.response.use(
+  (response) => response,
+  unauthorizedInterceptor
+);
 
 export default apiClient;

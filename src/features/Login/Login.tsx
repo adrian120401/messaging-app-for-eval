@@ -1,12 +1,18 @@
 import React, { useState } from "react";
 
 import {
+  Alert,
   Image,
   ImageBackground,
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { setToken, setUser } from "../../redux/global";
+import { useLogin } from "../../hooks/useLogin";
+import { saveToken } from "../../utils/storage";
 import logoSource from "../../assets/images/logo_chatter_color_2.png";
 import { Text } from "../../components/Text/Text";
 import { ThemedView } from "../../components/ThemedView/ThemedView";
@@ -15,6 +21,26 @@ import { Color } from "../../constants/colors";
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const dispatch = useDispatch();
+  const { mutateAsync: login, isPending } = useLogin();
+
+  const handleLogin = async () => {
+    if (!username || !password) {
+      Alert.alert("Error", "Por favor ingresa usuario y contraseña");
+      return;
+    }
+
+    try {
+      const response = await login({ username, password });
+      await saveToken(response.token);
+      dispatch(setToken(response.token));
+      dispatch(setUser(response.user));
+    } catch (error: any) {
+      const message = error?.message || "Ocurrió un error al iniciar sesión";
+      Alert.alert("Error", message);
+    }
+  };
 
   return (
     <ThemedView style={styles.container}>
@@ -43,8 +69,16 @@ function Login() {
             secureTextEntry
           />
 
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Iniciar sesión</Text>
+          <TouchableOpacity
+            style={[styles.button, isPending && styles.buttonDisabled]}
+            onPress={handleLogin}
+            disabled={isPending}
+          >
+            {isPending ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Iniciar sesión</Text>
+            )}
           </TouchableOpacity>
         </ThemedView>
       </ImageBackground>
@@ -108,5 +142,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textTransform: "none",
     fontWeight: "bold",
+  },
+  buttonDisabled: {
+    opacity: 0.7,
   },
 });
