@@ -16,6 +16,7 @@ import { resetStore, store } from "../redux/store";
 import SocketProvider from "./socketProvider";
 import { deleteToken } from "../utils/storage";
 import { disconnectSocket } from "./socketProvider";
+import '../../global.css';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

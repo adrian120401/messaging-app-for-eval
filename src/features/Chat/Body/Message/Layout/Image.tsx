@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import { Message } from "../../../../../api/domain/chat/chat.types";
+import { config } from "../../../../../api/config";
 
 interface Props {
     message: Message;
@@ -12,11 +13,12 @@ const blurhash =
 
 function ImageLayout({ message }: Props) {
 
+    const imageUrl = config.baseUrl + message.imageUrl;
     return (
         <View style={styles.container}>
             <Image
                 style={styles.image}
-                source={message.imageUrl ?? message.text}
+                source={imageUrl}
                 placeholder={blurhash}
                 contentFit="cover"
                 transition={1000}

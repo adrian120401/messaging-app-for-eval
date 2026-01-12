@@ -4,7 +4,6 @@ import {
   Alert,
   Image,
   ImageBackground,
-  StyleSheet,
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
@@ -16,7 +15,6 @@ import { saveToken } from "../../utils/storage";
 import logoSource from "../../assets/images/logo_chatter_color_2.png";
 import { Text } from "../../components/Text/Text";
 import { ThemedView } from "../../components/ThemedView/ThemedView";
-import { Color } from "../../constants/colors";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -43,17 +41,17 @@ function Login() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1 bg-primary_500 items-center justify-center">
       <ImageBackground
         source={require("../../assets/images/background.png")}
         resizeMode="cover"
-        style={styles.background}
+        className="flex-1 w-full items-center justify-center gap-4"
       >
-        <ThemedView style={styles.wrapper}>
-          <Image source={logoSource} style={styles.logo} resizeMode="contain" />
+        <ThemedView className="flex-1 w-full !bg-transparent items-center justify-center gap-4 p-4">
+          <Image source={logoSource} className="w-4/5 max-h-[80px] self-center mb-5" resizeMode="contain" />
 
           <TextInput
-            style={styles.input}
+            className="w-full h-[50px] bg-transparent border border-white/60 text-white rounded-lg px-4 py-3"
             placeholder="Nombre de usuario"
             placeholderTextColor="#fff"
             value={username}
@@ -61,7 +59,7 @@ function Login() {
             autoCapitalize="none"
           />
           <TextInput
-            style={styles.input}
+            className="w-full h-[50px] bg-transparent border border-white/60 text-white rounded-lg px-4 py-3"
             placeholder="Contraseña"
             placeholderTextColor="#fff"
             value={password}
@@ -70,14 +68,14 @@ function Login() {
           />
 
           <TouchableOpacity
-            style={[styles.button, isPending && styles.buttonDisabled]}
+            className="bg-primary_300 w-full items-center justify-center rounded-2xl p-4 disabled:opacity-70"
             onPress={handleLogin}
             disabled={isPending}
           >
             {isPending ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator className="text-white" />
             ) : (
-              <Text style={styles.buttonText}>Iniciar sesión</Text>
+              <Text className="!text-white font-bold">Iniciar sesión</Text>
             )}
           </TouchableOpacity>
         </ThemedView>
@@ -87,63 +85,3 @@ function Login() {
 }
 
 export default React.memo(Login);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Color.PRIMARY_500,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  background: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 16,
-    width: "100%",
-  },
-  wrapper: {
-    backgroundColor: "transparent",
-    width: "100%",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 16,
-    padding: 16,
-  },
-  logo: {
-    width: "80%",
-    maxHeight: 80,
-    alignSelf: "center",
-    marginBottom: 20,
-  },
-  input: {
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: "#ffffff99",
-    color: "#fff",
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    width: "100%",
-    height: 50,
-  },
-  button: {
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 15,
-    backgroundColor: Color.PRIMARY_300,
-    borderRadius: 16,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    textTransform: "none",
-    fontWeight: "bold",
-  },
-  buttonDisabled: {
-    opacity: 0.7,
-  },
-});

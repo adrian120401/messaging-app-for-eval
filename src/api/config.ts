@@ -1,7 +1,8 @@
 import { Platform } from "react-native";
 
-const API_BASE_URL = "http://192.168.0.225:3000/api";
-const SOCKET_BASE_URL = "http://192.168.0.225:3000";
+const BASE_URL = "http://192.168.0.225:3000";
+const API_BASE_URL = `${BASE_URL}/api`;
+const SOCKET_BASE_URL = BASE_URL;
 
 const getApiUrl = () => {
   if (Platform.OS === "ios") {
@@ -26,4 +27,5 @@ const getSocketUrl = () => {
 export const config = {
   apiUrl: getApiUrl(),
   socketUrl: getSocketUrl(),
+  baseUrl: BASE_URL,
 };
