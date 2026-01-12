@@ -5,6 +5,7 @@ import { SocketCallback, SocketEvent } from "../types/socket";
 
 export class Socket {
   private static socket?: SocketType;
+  private static listeners = new Map<string, Function>();
 
   static start() {
     Socket.socket = io(`${config.socketUrl}`);
@@ -21,9 +22,13 @@ export class Socket {
 
     return new Promise<void>((resolve) => {
       const setupListener = () => {
-        Socket.socket?.on(event, (data) => {
+        const wrapper = (data: T) => {
           callback(data);
-        });
+        };
+
+        Socket.listeners.set(event, wrapper);
+
+        Socket.socket?.on(event, wrapper);
         resolve();
       };
 
@@ -36,11 +41,15 @@ export class Socket {
   }
 
   static async stop<T>(event?: SocketEvent, callback?: SocketCallback<T>) {
-    if (!Socket.socket) {
+    if (!Socket.socket || !event) {
       return;
     }
 
-    Socket.socket.off(event, callback);
+    const wrapper = Socket.listeners.get(event);
+    if (wrapper) {
+      Socket.socket.off(event, wrapper as any);
+      Socket.listeners.delete(event);
+    }
   }
 
   static isConnected() {
@@ -50,9 +59,15 @@ export class Socket {
   static async disconnect() {
     Socket.socket?.disconnect();
     Socket.socket = undefined;
+    Socket.listeners.clear();
   }
 
   static async removeAllListeners(event?: SocketEvent) {
     Socket.socket?.removeAllListeners(event);
+    if (event) {
+      Socket.listeners.delete(event);
+    } else {
+      Socket.listeners.clear();
+    }
   }
 }
