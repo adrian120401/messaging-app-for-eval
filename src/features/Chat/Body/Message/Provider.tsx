@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useMemo } from "react";
 
 interface MessageContextType {
   id: string;
@@ -20,9 +20,7 @@ interface MessageProviderProps {
 }
 
 export function MessageProvider({ id, children }: MessageProviderProps) {
-  const contextValue: MessageContextType = {
-    id,
-  };
+  const contextValue: MessageContextType = useMemo(() => ({ id }), [id]);
 
   return (
     <MessageContext.Provider value={contextValue}>
