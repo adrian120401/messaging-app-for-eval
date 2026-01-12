@@ -1,25 +1,11 @@
-export default interface Paginated<T> extends Pagination {
+export default interface Paginated<T> {
   elements: T[];
+  pagination: Pagination;
 }
 
-export interface Pagination extends PaginationData {
-  totalElements: number;
-
-  page: number;
-
-  totalPages: number;
-
-  hasPrevPage: boolean;
-
-  hasNextPage: boolean;
-
-  prevPage: number | null;
-
-  nextPage: number | null;
-}
-
-export interface PaginationData {
+export interface Pagination {
+  hasMore: boolean;
   limit: number;
-
   offset: number;
+  totalMessages: number;
 }

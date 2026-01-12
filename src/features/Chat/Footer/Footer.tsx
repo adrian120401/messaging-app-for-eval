@@ -2,7 +2,6 @@ import React, { useCallback, useState } from "react";
 import { StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import { ThemedView } from "../../../components/ThemedView/ThemedView";
 import { setMessageInput } from "../../../redux/chat";
 import { getMessageInput } from "../../../redux/chat/chat.selector";

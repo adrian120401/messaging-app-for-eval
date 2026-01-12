@@ -16,4 +16,5 @@ export const {
   setChatPagination,
   setMessageInput,
   setAddEvent,
+  appendChatEvents,
 } = chatsSlice.actions;

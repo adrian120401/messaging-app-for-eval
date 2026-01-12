@@ -23,10 +23,8 @@ export default function Chat() {
   }, []);
 
   const onSuccess = useCallback((data: Paginated<Message>) => {
-    const { elements, ...pagination } = data;
-
-    dispatch(setChatEvents(elements));
-    dispatch(setChatPagination(pagination));
+    dispatch(setChatEvents(data.elements));
+    dispatch(setChatPagination(data.pagination));
   }, []);
 
   return (

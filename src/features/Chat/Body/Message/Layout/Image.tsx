@@ -12,7 +12,6 @@ const blurhash =
 
 function ImageLayout({ message }: Props) {
 
-    console.log(message);
     return (
         <View style={styles.container}>
             <Image

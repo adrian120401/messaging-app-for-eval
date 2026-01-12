@@ -40,4 +40,18 @@ export const chatReducers = {
       state.chatEvents = { [action.payload.id]: action.payload };
     }
   },
+
+  appendChatEvents: (
+    state: ChatsSlice,
+    action: PayloadAction<Message[] | undefined>
+  ) => {
+    if (action.payload) {
+      const newEvents = action.payload.reduce((acc, message) => {
+        acc[message.id] = message;
+        return acc;
+      }, {} as Record<string, Message>);
+
+      state.chatEvents = { ...state.chatEvents, ...newEvents };
+    }
+  },
 };
