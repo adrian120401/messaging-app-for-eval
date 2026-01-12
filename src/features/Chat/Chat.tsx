@@ -12,14 +12,20 @@ import Body from "./Body/Body";
 import Loading from "./Body/Loading";
 import Footer from "./Footer/Footer";
 import Header from "./Header/Header";
+import { useToast } from "../../hooks/useToast";
 
 export default function Chat() {
   const { mutate: getEvents, isPending } = useGetEvents();
+  const { showError } = useToast();
 
   const dispatch = useAppDispatch();
 
   useLayoutEffect(() => {
-    getEvents({ limit: DEFAULT_LIMIT, offset: DEFAULT_OFFSET }, { onSuccess });
+    getEvents({ limit: DEFAULT_LIMIT, offset: DEFAULT_OFFSET }, {
+      onSuccess, onError: (error) => {
+        showError(error.message || "Error al cargar los eventos");
+      }
+    });
   }, []);
 
   const onSuccess = useCallback((data: Paginated<Message>) => {
@@ -28,9 +34,9 @@ export default function Chat() {
   }, []);
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1 w-full">
       <KeyboardAvoidingView
-        style={styles.keyboardView}
+        className="flex-1 w-full"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
       >
@@ -43,12 +49,3 @@ export default function Chat() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  keyboardView: {
-    flex: 1,
-  },
-});

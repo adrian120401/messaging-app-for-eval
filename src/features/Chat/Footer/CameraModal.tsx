@@ -1,8 +1,9 @@
 import { useState, useRef } from "react";
-import { Modal, StyleSheet, TouchableOpacity, View, Alert } from "react-native";
+import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
 import { CameraView, useCameraPermissions, CameraType } from "expo-camera";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "../../../components/Text/Text";
+import { useToast } from "../../../hooks/useToast";
 
 interface CameraModalProps {
     visible: boolean;
@@ -14,6 +15,8 @@ export default function CameraModal({ visible, onClose, onCapture }: CameraModal
     const [facing, setFacing] = useState<CameraType>("back");
     const [permission, requestPermission] = useCameraPermissions();
     const cameraRef = useRef<CameraView>(null);
+
+    const { showError } = useToast();
 
     if (!permission) {
         return <View />;
@@ -50,8 +53,7 @@ export default function CameraModal({ visible, onClose, onCapture }: CameraModal
                     onClose();
                 }
             } catch (error) {
-                Alert.alert("Error", "No se pudo tomar la foto");
-                console.error(error);
+                showError("No se pudo tomar la foto");
             }
         }
     }

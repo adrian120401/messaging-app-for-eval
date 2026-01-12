@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import {
-  Alert,
   Image,
   ImageBackground,
   TextInput,
@@ -15,17 +14,20 @@ import { saveToken } from "../../utils/storage";
 import logoSource from "../../assets/images/logo_chatter_color_2.png";
 import { Text } from "../../components/Text/Text";
 import { ThemedView } from "../../components/ThemedView/ThemedView";
+import { useToast } from "../../hooks/useToast";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const { showError } = useToast();
 
   const dispatch = useDispatch();
   const { mutateAsync: login, isPending } = useLogin();
 
   const handleLogin = async () => {
     if (!username || !password) {
-      Alert.alert("Error", "Por favor ingresa usuario y contraseña");
+      showError("Por favor ingresa usuario y contraseña");
       return;
     }
 
@@ -36,7 +38,7 @@ function Login() {
       dispatch(setUser(response.user));
     } catch (error: any) {
       const message = error?.message || "Ocurrió un error al iniciar sesión";
-      Alert.alert("Error", message);
+      showError(message);
     }
   };
 

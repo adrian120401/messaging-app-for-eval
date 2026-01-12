@@ -9,8 +9,6 @@ export function throwHttpError(errorResponse: HttpResponse): never {
     throw new BaseError("Request cancelled", HttpStatusCode.CANCELED_ERROR);
   }
 
-  console.error("Error Details", data);
-
   const message = data.description ?? data.message ?? "Unknown Error";
   const status = errorResponse.status ?? HttpStatusCode.GENERIC;
   const response = data.details;

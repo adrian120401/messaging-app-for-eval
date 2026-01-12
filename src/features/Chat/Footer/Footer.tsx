@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemedView } from "../../../components/ThemedView/ThemedView";
@@ -11,6 +11,7 @@ import { setAddEvent } from "../../../redux/chat";
 import Send from "./Send";
 import AttachmentSheet from "./AttachmentSheet";
 import CameraModal from "./CameraModal";
+import { useToast } from "../../../hooks/useToast";
 
 function Footer() {
   const insets = useSafeAreaInsets();
@@ -22,6 +23,8 @@ function Footer() {
   const [sheetVisible, setSheetVisible] = useState(false);
   const [cameraVisible, setCameraVisible] = useState(false);
   const { mutate: sendImage } = useSendImage();
+
+  const { showError } = useToast();
 
   const onChangeText = useCallback((text: string) => {
     dispatch(setMessageInput(text));
@@ -46,9 +49,8 @@ function Footer() {
           dispatch(setAddEvent(data.data));
         }
       },
-      onError: (error) => {
-        Alert.alert("Error", "No se pudo enviar la imagen.");
-        console.error(error);
+      onError: () => {
+        showError("No se pudo enviar la imagen.");
       }
     });
   };

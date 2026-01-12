@@ -5,12 +5,14 @@ import {
 } from "@reduxjs/toolkit";
 import { chatsSlice } from "./chat";
 import { globalSlice } from "./global";
+import { toastSlice } from "./toast";
 
 const RESET_ACTION = "reset";
 
 const rootReducer = combineReducers({
   globalStatus: globalSlice.reducer,
   chatStatus: chatsSlice.reducer,
+  toastStatus: toastSlice.reducer,
 });
 
 export const resetStore = createAction(RESET_ACTION);

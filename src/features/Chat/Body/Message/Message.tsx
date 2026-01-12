@@ -1,6 +1,6 @@
 import React from "react";
 
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import * as MessageView from "../../../../components/MessageView/MessageView";
 import { getChatEventById, getChatEventPropertyById } from "../../../../redux/chat/chat.selector";
 import { useAppSelector } from "../../../../redux/hooks";
@@ -34,7 +34,7 @@ function Message(props: MessageProps) {
   return (
     <MessageProvider id={id}>
       <MessageView.Root isReceived={isReceived}>
-        <View style={styles.messageContent}>
+        <View className="px-2 w-full content-start">
           <MessageContent />
         </View>
 
@@ -49,11 +49,3 @@ function Message(props: MessageProps) {
 }
 
 export default React.memo(Message);
-
-const styles = StyleSheet.create({
-  messageContent: {
-    paddingHorizontal: 6,
-    width: "100%",
-    alignContent: "flex-start",
-  },
-});

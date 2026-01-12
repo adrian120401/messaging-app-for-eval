@@ -16,10 +16,13 @@ import { resetStore, store } from "../redux/store";
 import SocketProvider from "./socketProvider";
 import { deleteToken } from "../utils/storage";
 import { disconnectSocket } from "./socketProvider";
+import { Toast } from "../components/Toast";
+import { useToast } from "../hooks/useToast";
 import '../../global.css';
 
-export default function RootLayout() {
+function RootLayoutContent() {
   const colorScheme = useColorScheme();
+  const { showError } = useToast();
 
   const clearStorage = async () => {
     disconnectSocket();
@@ -29,12 +32,12 @@ export default function RootLayout() {
 
   const defaultOnError = (error: BaseError) => {
     if (error) {
-      const { status } = error;
+      const { status, message } = error;
       if (status === HttpStatusCode.UNAUTHORIZED) {
         return clearStorage();
       }
 
-      // NOTE: Handle other global errors here, f.e.g. show a toast notification
+      showError(message || "Ha ocurrido un error inesperado");
     }
   };
 
@@ -52,22 +55,29 @@ export default function RootLayout() {
   });
 
   return (
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <SocketProvider>
-            <GestureHandlerRootView>
-              <Stack>
-                <Stack.Screen name="index" options={{ headerShown: false }} />
-              </Stack>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider
+        value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+      >
+        <SocketProvider>
+          <GestureHandlerRootView>
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+            </Stack>
 
-              <StatusBar style="light" />
-            </GestureHandlerRootView>
-          </SocketProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
+            <StatusBar style="light" />
+            <Toast />
+          </GestureHandlerRootView>
+        </SocketProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <Provider store={store}>
+      <RootLayoutContent />
     </Provider>
   );
 }

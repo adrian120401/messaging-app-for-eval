@@ -3,7 +3,7 @@ import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import Login from "../features/Login/Login";
 import Chat from "../features/Chat/Chat";
-import { getToken } from "../utils/storage";
+import { deleteToken, getToken } from "../utils/storage";
 import { setToken } from "../redux/global";
 import { getToken as getTokenSelector } from "../redux/global/global.selector";
 
@@ -19,8 +19,8 @@ export default function HomeScreen() {
         if (storedToken) {
           dispatch(setToken(storedToken));
         }
-      } catch (error) {
-        console.error("Error checking token:", error);
+      } catch {
+        deleteToken();
       } finally {
         setIsLoading(false);
       }

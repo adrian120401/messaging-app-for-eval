@@ -8,9 +8,12 @@ import { useSendTextMessage } from "../../../hooks/useSendMessage";
 import { setAddEvent, setMessageInput } from "../../../redux/chat";
 import { getMessageInput } from "../../../redux/chat/chat.selector";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { useToast } from "../../../hooks/useToast";
 
 function Send() {
   const { mutate: sendMessage } = useSendTextMessage();
+
+  const { showError } = useToast();
 
   const dispatch = useAppDispatch();
 
@@ -25,13 +28,17 @@ function Send() {
       return;
     }
 
-    sendMessage(message, { onSuccess });
+    sendMessage(message, { onSuccess, onError });
   }, [message]);
 
   const onSuccess = useCallback((r: SendMessageResponse) => {
     dispatch(setAddEvent(r.data));
 
     dispatch(setMessageInput(undefined));
+  }, []);
+
+  const onError = useCallback(() => {
+    showError("No se pudo enviar el mensaje.");
   }, []);
 
   return (
