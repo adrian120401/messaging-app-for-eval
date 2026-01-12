@@ -1,141 +1,125 @@
-# Evaluación Técnica – Mobile Engineer (React Native / Expo)
+# Evaluación Técnica – Mobile Engineer (React Native / Expo) - Adrián de los Reyes
 
-## Objetivo
+# ENTREGA:
 
-El objetivo de esta evaluación es comprender el enfoque de la persona candidata al momento de diseñar, estructurar y desarrollar una aplicación mobile real, así como su capacidad para resolver problemas habituales de producto, arquitectura y performance.
+## ⚠️ Problemas de performance detectados
 
-No se espera una solución perfecta ni completamente finalizada, sino una implementación **funcional, clara y bien fundamentada**, con foco en buenas prácticas de desarrollo.
+Durante el desarrollo se identificaron dos problemas de performance relevantes introducidos de forma intencional en la base del proyecto.
 
----
+1. Re-renders innecesarios por referencia inestable en Context
 
-## Contexto
+Problema
+El MessageProvider recreaba el objeto del contexto en cada render. Aunque el id no cambiara, la referencia en memoria sí lo hacía, provocando que todos los componentes consumidores detectaran cambios.
 
-Se provee una aplicación base desarrollada con **Expo + React Native**, que incluye:
+Impacto
 
-- Store global de **Redux** ya configurado
-- Arquitectura básica de acceso a API
-- Pantalla de **Login parcialmente implementada**
-- Pantalla de **Chat base implementada**
-- Ejemplo funcional de **socket listener para mensajes de texto**
-- Un **problema de performance introducido de manera intencional** (performance leak)
+Re-renders innecesarios en componentes de mensajes
 
-A partir de esto, se deberá completar y extender la aplicación.
+React.memo() no era efectivo
 
----
+Impacto significativo en listas grandes de mensajes
 
-## Uso de la API
-
-Hemos desarrollado una API de mensajería básica para que puedas probar la aplicación. Podés acceder a ella a través del siguiente link:
-
-👉 https://github.com/toremsoftware/messaging-api-for-eval
-
-Dentro del archivo README.md vas a encontrar las instrucciones para levantarla de forma local. Ten en cuenta que esta API tiene como único objetivo facilitar el desarrollo de la aplicación; no es necesario ni esperado que realices cambios sobre ella, ya que no forma parte de la evaluación.
+Solución
+Se corrigió utilizando useMemo para memorizar el valor del contexto y evitar re-renders mientras el id no cambie.
 
 ---
 
-## Alcance del desafío
+2. Memory leak en listeners de Socket.IO
 
-### 1. Autenticación y Splash Screen
+Problema
+Los listeners de Socket.IO no se eliminaban correctamente al desmontar componentes.
 
-- Completar la implementación del **Login**, utilizando **React Query** para la comunicación con la API
-- Al autenticarse correctamente:
-  - Persistir el token en el dispositivo (mecanismo de almacenamiento a elección)
-- Al iniciar la aplicación:
-  - Si existe un token válido almacenado, se deberá ingresar directamente a la aplicación
-  - En caso contrario, se deberá mostrar la pantalla de Login
-- **Splash Screen** (parcialmente implementada): Lo mencionado anteriormente se deberá ejecutar mientras se muestra la splash screen.
+Causa
 
----
+El callback registrado en el socket no mantenía la misma referencia al momento de intentar removerlo
 
-### 2. Navegación
+El cleanup se ejecutaba sin una referencia válida del listener
 
-- Agregar en el Header del chat un botón de Logout e implementar el **ruteo de pantallas** entre:
-  - Login
-  - Chats
-- Se puede utilizar:
-  - Una librería de navegación
-  - O una solución nativa/custom
+Impacto
 
-La elección queda a criterio de la persona candidata.
+Memory leak progresivo
+
+Múltiples ejecuciones del mismo handler por evento
+
+Degradación del rendimiento con el uso prolongado de la aplicación
+
+Solución
+Se ajustó la gestión de listeners para garantizar referencias estables y permitir su correcta eliminación durante el cleanup del socket.
 
 ---
 
-### 3. Mensajería
+## 🧠 Decisiones técnicas
 
-#### Envío de mensajes
+Durante la implementación se tomaron las siguientes decisiones con foco en performance, experiencia de usuario y mantenibilidad del código.
 
-- Implementar envío de **mensajes de imagen** (layout en Message/Layout/Image.tsx):
-  - Utilizando **expo-camera**
-  - Agregar un botón de adjuntar a la izquierda del input y al presionarlo se deberá abrir un **Action Sheet** con las siguientes opciones:
-    - Cámara (habilitada)
-    - Fototeca (deshabilitada)
-    - Archivo (deshabilitada)
-    - Audio (deshabilitada)
+### Gestión del ciclo de vida del Socket
 
-> Las opciones deshabilitadas deben ser visibles, pero no funcionales.
+Se decidió conectar el socket únicamente cuando el usuario está autenticado y desconectarlo explícitamente al cerrar sesión.
 
-#### Recepción de mensajes
+**Motivación**
 
-- Implementar la **recepción de mensajes vía socket**: Si todo lo anterior se realizó correctamente, esto debería funcionar automáticamente con el socket listener de nuevo mensaje ya implementado.
+- Evitar conexiones abiertas innecesarias
+- Prevenir listeners activos sin un usuario logueado
+- Reducir consumo de recursos y efectos secundarios
 
 ---
 
-### 4. Listado de mensajes
+### Manejo del teclado (Keyboard Handling)
 
-- Implementar **paginación de mensajes**
-- Utilizar **virtualización** para el renderizado del listado
-- Tener en cuenta consideraciones de performance y escalabilidad del chat
+Se incorporó `KeyboardAvoidingView` para evitar que el teclado oculte el input de mensajes mientras el usuario escribe.
 
----
+**Motivación**
 
-### 5. Performance
-
-- La aplicación contiene **un problema de performance introducido de manera intencional**
-- Se espera que:
-  - El problema sea identificado
-  - Se explique brevemente su causa
-  - Se proponga y/o implemente una solución (total o parcial)
+- Mejorar la experiencia de escritura en dispositivos móviles
+- Evitar interacciones frustrantes en el chat
+- Comportamiento consistente entre plataformas
 
 ---
 
-## Adicionales (no excluyentes)
+### Mejora de UX en visualización de imágenes
 
-Los siguientes puntos no son obligatorios, pero serán considerados un plus:
+Se implementó la visualización de imágenes en pantalla completa con soporte de zoom dentro del chat.
 
-- Propuestas de mejora de **arquitectura** y/o **performance** general de la aplicación
-- Integración de **NativeWind**:
-  - Instalación
-  - Uso en al menos algunas pantallas o componentes
-- Implementación de un sistema de **notificaciones o feedback visual** para errores en la comunicación con la API
+**Motivación**
 
----
-
-## Criterios de evaluación
-
-- Claridad y calidad del código
-- Organización del proyecto
-- Manejo de estado y side effects
-- Uso adecuado de hooks
-- Manejo de errores
-- Decisiones técnicas y fundamentos
-- Identificación y resolución de problemas de performance
+- Mejor experiencia de usuario al enviar y recibir imágenes
+- Comportamiento alineado con aplicaciones de mensajería reales
 
 ---
 
-## Entrega
+### Integración de NativeWind
 
-- Repositorio con el código final
-- README actualizado (puede ser este mismo) que incluya:
-  - Decisiones técnicas relevantes
-  - Posibles mejoras con más tiempo disponible
-  - Problemas detectados (por ejemplo, el performance leak)
+Se integró NativeWind para el estilado de componentes.
 
-Para entregar la evaluación, deberás comprimir la solución en un archivo `.zip` (no `.rar`) y subirla en el siguiente formulario: https://forms.gle/g3j5m5C8ZEV42yxU8.
+**Motivación**
+
+- Código más limpio y declarativo
+- Reducción de estilos inline y `StyleSheet`
+- Mayor consistencia visual
+- Mejor mantenibilidad a largo plazo
 
 ---
 
-## Notas finales
+### Uso de soluciones nativas y librerías oficiales
 
-No existe una única forma correcta de resolver el desafío. Se valoran especialmente las soluciones simples, claras y bien razonadas, por sobre implementaciones innecesariamente complejas.
+Siempre que fue posible, se priorizó el uso de APIs nativas de Expo / React Native y librerías oficiales o ampliamente adoptadas.
 
-Desde el equipo de Torem te deseamos mucha suerte! 🍀
+**Motivación**
+
+- Menor complejidad innecesaria
+- Mejor compatibilidad y estabilidad
+- Código más predecible y fácil de escalar
+
+---
+
+## 🚀 Posibles mejoras con más tiempo disponible
+
+Con mayor disponibilidad de tiempo, se podrían haber implementado las siguientes mejoras para ampliar funcionalidad, escalabilidad y calidad general de la aplicación:
+
+- Extender el uso de **NativeWind a todos los componentes**, logrando un estilado completamente unificado y una mayor limpieza del código visual.
+- Implementar las **funcionalidades actualmente deshabilitadas** (fototeca, archivos y audio) mencionadas en el README original del desafío.
+- Incorporar **soporte para múltiples chats y conversaciones**, en caso de que la modificación de la API formara parte del alcance de la prueba.
+- Persistir las imágenes enviadas en un **servicio de almacenamiento en la nube**, en lugar de manejar únicamente recursos locales.
+- Mejorar el performance general mediante **estrategias de cache**, tanto en el consumo de la API (React Query) como en el manejo de mensajes y recursos multimedia.
+
+Estas mejoras apuntan a una aplicación más completa, escalable y cercana a un entorno productivo real.
