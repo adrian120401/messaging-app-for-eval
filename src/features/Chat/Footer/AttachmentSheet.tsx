@@ -98,6 +98,7 @@ export default function AttachmentSheet({
                                         </View>
                                         <Text
                                             type="default"
+                                            numberOfLines={1}
                                             style={!item.enabled && styles.disabledText}
                                         >
                                             {item.label}
@@ -123,14 +124,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        paddingHorizontal: 20,
+        paddingHorizontal: 8,
         paddingTop: 20,
     },
     optionsContainer: {
         flexDirection: "row",
         justifyContent: "space-around",
         flexWrap: "wrap",
-        gap: 10,
+        gap: 4,
     },
     optionItem: {
         alignItems: "center",

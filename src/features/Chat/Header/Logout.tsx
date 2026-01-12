@@ -2,6 +2,7 @@ import React from "react";
 import { Alert, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
+import { disconnectSocket } from "../../../app/socketProvider";
 import { resetStore } from "../../../redux/store";
 import { deleteToken } from "../../../utils/storage";
 
@@ -21,6 +22,7 @@ function Logout() {
                     text: "Cerrar sesión",
                     style: "destructive",
                     onPress: async () => {
+                        disconnectSocket();
                         await deleteToken();
                         dispatch(resetStore());
                     },

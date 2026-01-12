@@ -1,22 +1,25 @@
 import { Platform } from "react-native";
 
+const API_BASE_URL = "http://192.168.0.225:3000/api";
+const SOCKET_BASE_URL = "http://192.168.0.225:3000";
+
 const getApiUrl = () => {
   if (Platform.OS === "ios") {
-    return "http://localhost:3000/api"; // iOS simulator
+    return API_BASE_URL;
   } else if (Platform.OS === "android") {
-    return "http://10.0.2.2:3000/api"; // Android emulator
+    return API_BASE_URL.replace("localhost", "10.0.2.2");
   } else {
-    return "http://192.168.0.222:3000/api"; // Dispositivos físicos y web
+    return API_BASE_URL.replace("localhost", "192.168.0.222");
   }
 };
 
 const getSocketUrl = () => {
   if (Platform.OS === "ios") {
-    return "http://localhost:3000"; // iOS simulator
+    return SOCKET_BASE_URL;
   } else if (Platform.OS === "android") {
-    return "http://10.0.2.2:3000"; // Android emulator
+    return SOCKET_BASE_URL.replace("localhost", "10.0.2.2");
   } else {
-    return "http://192.168.0.222:3000"; // Dispositivos físicos y web
+    return SOCKET_BASE_URL.replace("localhost", "192.168.0.222");
   }
 };
 

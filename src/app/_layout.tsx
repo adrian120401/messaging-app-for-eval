@@ -12,14 +12,18 @@ import { Provider } from "react-redux";
 import { HttpStatusCode } from "../api/baseRepositories/api/http/constants";
 import { BaseError } from "../api/errors/BaseError";
 import { useColorScheme } from "../hooks/useColorSchemeWeb";
-import { store } from "../redux/store";
+import { resetStore, store } from "../redux/store";
 import SocketProvider from "./socketProvider";
+import { deleteToken } from "../utils/storage";
+import { disconnectSocket } from "./socketProvider";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   const clearStorage = async () => {
-    // NOTE: Clear any stored data, e.g., AsyncStorage, Redux store, etc.
+    disconnectSocket();
+    await deleteToken();
+    store.dispatch(resetStore());
   };
 
   const defaultOnError = (error: BaseError) => {
