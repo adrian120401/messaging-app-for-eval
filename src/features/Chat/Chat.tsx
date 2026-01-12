@@ -1,5 +1,5 @@
 import { useCallback, useLayoutEffect } from "react";
-import { StyleSheet } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
 
 import { Message } from "../../api/domain/chat/chat.types";
 import Paginated from "../../api/types/paginated";
@@ -29,17 +29,26 @@ export default function Chat() {
 
   return (
     <ThemedView style={styles.container}>
-      <Header />
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+      >
+        <Header />
 
-      {!isPending ? <Body /> : <Loading />}
+        {!isPending ? <Body /> : <Loading />}
 
-      <Footer />
+        <Footer />
+      </KeyboardAvoidingView>
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  keyboardView: {
     flex: 1,
   },
 });
